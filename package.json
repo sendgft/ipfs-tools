@@ -1,0 +1,44 @@
+{
+  "name": "@sendgft/ipfs",
+  "version": "1.0.0",
+  "description": "IPFS tools",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "package.json",
+    "package-lock.json"
+  ],
+  "scripts": {
+    "postinstall": "yarn build",
+    "build": "tsc && tsc -p tsconfig-esm.json",
+    "start-local-daemon": "ipfs config replace ./ipfs-local-daemon.json && ipfs daemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sendgft/ipfs.git"
+  },
+  "keywords": [
+    "ipfs",
+    "sendgft",
+    "gft"
+  ],
+  "author": "Ramesh Nair <ram@hiddentao.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sendgft/ipfs/issues"
+  },
+  "homepage": "https://github.com/sendgft/ipfs#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^9.1.2",
+    "@commitlint/config-conventional": "^9.1.2",
+    "husky": "^7.0.4",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@sendgft/contracts": "^1.8.0",
+    "ipfs-http-client": "^55.0.0"
+  }
+}
