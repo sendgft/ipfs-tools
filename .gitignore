@@ -1,4 +1,3 @@
-dist/
 node_modules
 npm-error*
 .DS_Store

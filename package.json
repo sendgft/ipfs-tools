@@ -1,6 +1,7 @@
 {
   "name": "@sendgft/ipfs",
   "version": "1.0.0",
+  "private": true,
   "description": "IPFS tools",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
