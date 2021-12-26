@@ -10,7 +10,7 @@
     "outDir": "./dist/cjs"
   },
   "include": [
-    "types.d.ts",
+    "src/*",
     "src/**/*"
   ]
 }
