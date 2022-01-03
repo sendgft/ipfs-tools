@@ -11,9 +11,20 @@ This exposes a single function - `getIpfsClient()` which is used as follows:
 ```js
 import { getIpfsClient } from '@sendgft/ipfs'
 
+// get client instance
 const client = getIpfsClient('http://ipfs-endpoint-url/api/v0')
 
+// upload string
 const { cid } = await client.uploadString('test')
+
+// upload string such that it will be available at path /file.txt
+const { cid3 } = await client.uploadString('test', '/file.txt')
+
+// upload json
+const { cid2 } = await client.uploadJson({ test: true })
+
+// upload json such that it will be available at path /file.txt
+const { cid2 } = await client.uploadJson({ test: true }, '/file.txt')
 ```
 
 ## CLI Commands
