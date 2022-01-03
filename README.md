@@ -32,7 +32,7 @@ const { cid2 } = await client.uploadJson({ test: true }, '/file.txt')
 **daemon**
 
 ```
-yarn ipfs-sendgft daemon
+yarn ipfs-tools daemon
 ```
 
 This will start a local IPFS daemon in *test* mode. The endpoints will be:
@@ -45,7 +45,7 @@ _Note: Ensure the [IPFS daemon software](https://ipfs.io/) is installed_.
 **write-default-metadata**
 
 ```
-yarn ipfs-sendgft write-default-metadata --api URL --gateway URL --rpc URL --mnemonic mnemonic --contract address
+yarn ipfs-tools write-default-metadata --api URL --gateway URL --rpc URL --mnemonic mnemonic --contract address
 ```
 
 This does two things:
@@ -70,5 +70,5 @@ Parameter info:
 Get help on all available commands.
 
 ```
-yarn ipfs-sendgft help
+yarn ipfs-tools help
 ```

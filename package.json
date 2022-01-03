@@ -1,12 +1,12 @@
 {
-  "name": "@sendgft/ipfs",
+  "name": "@sendgft/ipfs-tools",
   "version": "1.0.0",
   "private": true,
-  "description": "IPFS tools",
+  "description": "IPFS tools for sendGFT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/cjs/index.d.ts",
-  "bin": "bin/ipfs-sendgft",
+  "bin": "bin/ipfs-tools",
   "files": [
     "dist",
     "bin",
@@ -19,11 +19,11 @@
     "postinstall": "yarn build",
     "build": "tsc && tsc -p tsconfig-esm.json",
     "watch": "tsc --watch",
-    "ipfs-sendgft": "bin/ipfs-sendgft"
+    "ipfs-tools": "bin/ipfs-tools"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sendgft/ipfs.git"
+    "url": "git+https://github.com/sendgft/ipfs-tools.git"
   },
   "keywords": [
     "ipfs",
@@ -33,9 +33,9 @@
   "author": "Ramesh Nair <ram@hiddentao.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/sendgft/ipfs/issues"
+    "url": "https://github.com/sendgft/ipfs-tools/issues"
   },
-  "homepage": "https://github.com/sendgft/ipfs#readme",
+  "homepage": "https://github.com/sendgft/ipfs-tools#readme",
   "devDependencies": {
     "@types/command-line-args": "^5.2.0",
     "@types/command-line-usage": "^5.0.2",

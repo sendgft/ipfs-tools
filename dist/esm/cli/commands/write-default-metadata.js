@@ -86,10 +86,10 @@ export const execute = ({ api, gateway, rpc, contract: address, mnemonic, }) => 
         }
         return contract;
     }));
-    // await tryCatch('Contract: set default content hash', async () => {
-    //   await contract.setDefaultContentHash(cid)
-    // })
-    // await tryCatch('Contract: set token base URI', async () => {
-    //   await contract.setBaseURI(gateway)
-    // })
+    yield tryCatch('Contract: set default content hash', () => __awaiter(void 0, void 0, void 0, function* () {
+        (yield yield contract.setDefaultContentHash(cid)).wait();
+    }));
+    yield tryCatch('Contract: set token base URI', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (yield contract.setBaseURI(gateway)).wait();
+    }));
 });

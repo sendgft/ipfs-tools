@@ -39,12 +39,12 @@ function helpCommand(comm) {
             const { summary, params, options } = COMMANDS[comm].getMeta();
             const sections = [
                 {
-                    header: `ipfs-sendgft: ${comm}`,
+                    header: `ipfs-tools: ${comm}`,
                     content: summary,
                 },
                 {
                     header: 'Usage',
-                    content: `ipfs-sendgft ${comm} ${renderParams(params)} ${options ? '[options]' : ''}`
+                    content: `ipfs-tools ${comm} ${renderParams(params)} ${options ? '[options]' : ''}`
                 },
                 ...(params ? [{
                         header: 'Parameters',
@@ -61,12 +61,12 @@ function helpCommand(comm) {
     }
     const sections = [
         {
-            header: 'ipfs-sendgft',
+            header: 'ipfs-tools',
             content: ''
         },
         {
             header: 'Usage',
-            content: '$ ipfs-sendgft <command> [options]'
+            content: '$ ipfs-tools <command> [options]'
         },
         {
             header: 'Commands',
