@@ -4,7 +4,7 @@ IPFS tools for [sendgft](https://github.com/sendgft).
 
 ## Commands
 
-**Run local IPFS daemon**
+**daemon: run local IPFS daemon**
 
 This will start a local IPFS daemon in *test* mode. The endpoints will be:
 
@@ -17,7 +17,7 @@ _Note: Ensure the [IPFS daemon software](https://ipfs.io/) is installed_.
 yarn ipfs-sendgft daemon
 ```
 
-**Setup default IPFS NFT metadata**
+**write-default-metadata: setup default IPFS NFT metadata**
 
 This does two things:
 
@@ -40,7 +40,7 @@ Parameters:
   --contract address    On-chain Gifter smart contract address. 
 ```
 
-**Help**
+**help: get command help**
 
 Get help on all available commands.
 
