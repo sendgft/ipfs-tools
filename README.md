@@ -2,7 +2,7 @@
 
 IPFS tools for [sendgft](https://github.com/sendgft).
 
-## Commands
+## Commands
 
 **Run local IPFS daemon**
 
