@@ -4,6 +4,21 @@ IPFS tools for [sendgft](https://github.com/sendgft).
 
 This functions as both a library and CLI.
 
+## Development
+
+After cloning the repo you must build the code:
+
+```shell
+yarn build
+```
+
+To auto-rebuild on code changes:
+
+```shell
+yarn watch
+```
+
+
 ## Library
 
 This exposes a single function - `getIpfsClient()` which is used as follows:

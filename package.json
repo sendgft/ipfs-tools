@@ -16,7 +16,6 @@
     "package-lock.json"
   ],
   "scripts": {
-    "postinstall": "yarn build",
     "build": "tsc && tsc -p tsconfig-esm.json",
     "watch": "tsc --watch",
     "ipfs-tools": "bin/ipfs-tools"
