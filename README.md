@@ -2,7 +2,21 @@
 
 IPFS tools for [sendgft](https://github.com/sendgft).
 
-## Commands
+This functions as both a library and CLI.
+
+## Library
+
+This exposes a single function - `getIpfsClient()` which is used as follows:
+
+```js
+import { getIpfsClient } from '@sendgft/ipfs'
+
+const client = getIpfsClient('http://ipfs-endpoint-url/api/v0')
+
+const { cid } = await client.uploadString('test')
+```
+
+## CLI Commands
 
 **daemon**
 

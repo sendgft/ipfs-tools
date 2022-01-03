@@ -12,7 +12,7 @@ export declare class IpfsClient {
      *
      * @param str The string.
      * @param filePath The file path to upload at.
-     * @returns CID.
+     * @returns CID & other info.
      */
     uploadString(str: string, filePath?: string): Promise<import("ipfs-core-types/src/root").AddResult>;
     /**
@@ -20,7 +20,7 @@ export declare class IpfsClient {
      *
      * @param json The JSON.
      * @param filePath The file path to upload at.
-     * @returns CID.
+     * @returns CID & other info.
      */
     uploadJson(json: object, filePath?: string): Promise<import("ipfs-core-types/src/root").AddResult>;
 }

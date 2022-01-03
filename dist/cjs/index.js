@@ -26,7 +26,7 @@ class IpfsClient {
      *
      * @param str The string.
      * @param filePath The file path to upload at.
-     * @returns CID.
+     * @returns CID & other info.
      */
     uploadString(str, filePath) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,7 +41,7 @@ class IpfsClient {
      *
      * @param json The JSON.
      * @param filePath The file path to upload at.
-     * @returns CID.
+     * @returns CID & other info.
      */
     uploadJson(json, filePath) {
         return __awaiter(this, void 0, void 0, function* () {

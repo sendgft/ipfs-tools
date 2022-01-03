@@ -19,7 +19,7 @@ export class IpfsClient {
    * 
    * @param str The string.
    * @param filePath The file path to upload at.
-   * @returns CID.
+   * @returns CID & other info.
    */
   async uploadString (str: string, filePath?: string) {
     return this._client.add({
@@ -33,7 +33,7 @@ export class IpfsClient {
    * 
    * @param json The JSON.
    * @param filePath The file path to upload at.
-   * @returns CID.
+   * @returns CID & other info.
    */
   async uploadJson(json: object, filePath?: string) {
     return this.uploadString(JSON.stringify(json, null, 2), filePath)
