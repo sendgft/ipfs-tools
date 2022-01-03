@@ -6,7 +6,19 @@ export const exit = () => {
   process.exit(hasError ? -1 : 0)
 }
 
+export const log = (msg: string) => {
+  console.log(chalk.white(msg))
+}
+
 export const logError = (msg: string) => {
   hasError = true
   console.error(chalk.red(msg))
 }
+
+export const tryCatch = async (title: string, fn: Function): Promise<any> => {
+  console.log(chalk.cyan(`${title} >`))
+  const ret = await fn()
+  console.log(chalk.cyan(`< ${title}`))
+  return ret
+}
+

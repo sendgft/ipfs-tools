@@ -10,7 +10,7 @@ export class IpfsClient {
    * 
    * @param url The IFPS API endpoint.
    */
-  constructor (url: string) {
+  constructor(url: string) {
     this._client = create({ url, timeout: 10000 })
   }
 
@@ -21,7 +21,7 @@ export class IpfsClient {
    * @param filePath The file path to upload at.
    * @returns CID.
    */
-  async uploadString (str: string, filePath?: string) {
+  async uploadString(str: string, filePath?: string) {
     return this._client.add({
       path: filePath,
       content: Buffer.from(str)
