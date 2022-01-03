@@ -27,7 +27,7 @@ This does two things:
 _Note: It is assumed that the supplied wallet address is the admin for the given smart contract_.
 
 ```
-yarn ipfs-sendgft write-default-metadata --api URL --gateway URL --rpc URL --mnemonic mnemonic --contract address                                        
+yarn ipfs-sendgft write-default-metadata --api URL --gateway URL --rpc URL --mnemonic mnemonic --contract address
 ```
 
 Parameters:
