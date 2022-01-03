@@ -21,16 +21,28 @@ yarn ipfs-sendgft daemon
 
 This does two things:
 
-1. Writes default greeting card NFT metadata JSON to the given IPFS endpoint, and obtained a CID
+1. Writes default greeting card NFT metadata JSON to the given IPFS endpoint, and obtains a CID
 2. Writes the CID and IFPS gateway base URL to the given on-chain [Gifter smart contract](https://github.com/sendgft/contracts)
 
 _Note: It is assumed that the supplied wallet address is the admin for the given smart contract_.
 
 ```
-yarn ipfs-sendgft write-default-metadata --api <ipfs api endpont> --gateway <ipfs gateway base URL> --chain <evm chain id> --contract <contract address> --mnemonic <wallet mnemonic>
+yarn ipfs-sendgft write-default-metadata --api URL --gateway URL --rpc URL --mnemonic mnemonic --contract address                                        
+```
+
+Parameters:
+
+```
+  --api URL             IPFS API endpoint URL.                  
+  --gateway URL         IPFS gateway base URL.                  
+  --rpc URL             EVM chain RPC endpoint URL.             
+  --mnemonic mnemonic   Ethereum wallet mnemonic.               
+  --contract address    On-chain Gifter smart contract address. 
 ```
 
 **Help**
+
+Get help on all available commands.
 
 ```
 yarn ipfs-sendgft help
