@@ -1,19 +1,9 @@
+import { Readable } from 'stream'
 import { Buffer } from 'buffer'
 import { create, IPFSHTTPClient } from 'ipfs-http-client'
+import pinataSDK, { PinataClient } from '@pinata/sdk'
 
-export class IpfsClient {
-  public static instances: Record<string, IpfsClient> = {}
-  private _client: IPFSHTTPClient
-
-  /**
-   * Constructor.
-   * 
-   * @param url The IFPS API endpoint.
-   */
-  constructor(url: string) {
-    this._client = create({ url, timeout: 10000 })
-  }
-
+abstract class IpfsClient {
   /**
    * Upload string to IPFS.
    * 
@@ -21,11 +11,8 @@ export class IpfsClient {
    * @param filePath The file path to upload at.
    * @returns CID.
    */
-  async uploadString(str: string, filePath?: string) {
-    return this._client.add({
-      path: filePath,
-      content: Buffer.from(str)
-    })
+  async uploadString (str: string): Promise<string> {
+    throw new Error('not implemented')
   }
 
   /**
@@ -35,11 +22,46 @@ export class IpfsClient {
    * @param filePath The file path to upload at.
    * @returns CID.
    */
-  async uploadJson(json: object, filePath?: string) {
-    return this.uploadString(JSON.stringify(json, null, 2), filePath)
+  async uploadJson (json: object) {
+    return this.uploadString(JSON.stringify(json, null, 2))
   }
 }
 
+class SimpleIpfsClient extends IpfsClient {
+  private _client: IPFSHTTPClient
+
+  constructor(url: string) {
+    super()
+    this._client = create({ url, timeout: 10000 })
+  }
+
+  async uploadString(str: string) {
+    const { cid } = await this._client.add({
+      content: Buffer.from(str)
+    })
+
+    return `${cid}`
+  }
+}
+
+
+class PinatapfsClient extends IpfsClient {
+  private _pinata: PinataClient
+
+  constructor(apiKey: string, secret: string) {
+    super()
+    this._pinata = pinataSDK(apiKey, secret)
+  }
+
+  async uploadString(str: string) {
+    const strStream = Readable.from(str)
+    const { IpfsHash } = await this._pinata.pinFileToIPFS(strStream)
+    return IpfsHash
+  }
+}
+
+
+const instances: Record <string, IpfsClient> = {}
 
 /**
  * Get IPFS client instance.
@@ -47,8 +69,16 @@ export class IpfsClient {
  * @returns {IpfsClient}
  */
 export const getIpfsClient = (url: string): IpfsClient => {
-  if (!IpfsClient.instances[url]) {
-    IpfsClient.instances[url] = new IpfsClient(url)
+  if (instances[url]) {
+    return instances[url]
   }
-  return IpfsClient.instances[url]
+
+  if (url.startsWith('pinata://')) {
+    const [ apiKey, secret ] = url.substring(9).split(':')
+    instances[url] = new PinatapfsClient(apiKey, secret)
+  } else {
+    instances[url] = new SimpleIpfsClient(url)
+  }
+
+  return instances[url]
 }

@@ -1,12 +1,4 @@
-export declare class IpfsClient {
-    static instances: Record<string, IpfsClient>;
-    private _client;
-    /**
-     * Constructor.
-     *
-     * @param url The IFPS API endpoint.
-     */
-    constructor(url: string);
+export interface IpfsClient {
     /**
      * Upload string to IPFS.
      *
@@ -14,7 +6,7 @@ export declare class IpfsClient {
      * @param filePath The file path to upload at.
      * @returns CID.
      */
-    uploadString(str: string, filePath?: string): Promise<import("ipfs-core-types/src/root").AddResult>;
+    uploadString: (str: string) => Promise<string>;
     /**
      * Upload JSON to IPFS.
      *
@@ -22,7 +14,7 @@ export declare class IpfsClient {
      * @param filePath The file path to upload at.
      * @returns CID.
      */
-    uploadJson(json: object, filePath?: string): Promise<import("ipfs-core-types/src/root").AddResult>;
+    uploadJson: (json: object) => Promise<string>;
 }
 /**
  * Get IPFS client instance.

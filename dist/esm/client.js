@@ -7,54 +7,61 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { Readable } from 'stream';
 import { Buffer } from 'buffer';
 import { create } from 'ipfs-http-client';
-export class IpfsClient {
-    /**
-     * Constructor.
-     *
-     * @param url The IFPS API endpoint.
-     */
+import pinataSDK from '@pinata/sdk';
+class SimpleIpfsClient {
     constructor(url) {
         this._client = create({ url, timeout: 10000 });
     }
-    /**
-     * Upload string to IPFS.
-     *
-     * @param str The string.
-     * @param filePath The file path to upload at.
-     * @returns CID.
-     */
-    uploadString(str, filePath) {
+    uploadString(str) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this._client.add({
-                path: filePath,
+            const { cid } = yield this._client.add({
                 content: Buffer.from(str)
             });
+            return `${cid}`;
         });
     }
-    /**
-     * Upload JSON to IPFS.
-     *
-     * @param json The JSON.
-     * @param filePath The file path to upload at.
-     * @returns CID.
-     */
-    uploadJson(json, filePath) {
+    uploadJson(json) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.uploadString(JSON.stringify(json, null, 2), filePath);
+            return this.uploadString(JSON.stringify(json, null, 2));
         });
     }
 }
-IpfsClient.instances = {};
+class PinatapfsClient {
+    constructor(apiKey, secret) {
+        this._pinata = pinataSDK(apiKey, secret);
+    }
+    uploadString(str) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const strStream = Readable.from(str);
+            const { IpfsHash } = yield this._pinata.pinFileToIPFS(strStream);
+            return IpfsHash;
+        });
+    }
+    uploadJson(json) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.uploadString(JSON.stringify(json, null, 2));
+        });
+    }
+}
+const instances = {};
 /**
  * Get IPFS client instance.
  * @param url The IPFS API endpoint.
  * @returns {IpfsClient}
  */
 export const getIpfsClient = (url) => {
-    if (!IpfsClient.instances[url]) {
-        IpfsClient.instances[url] = new IpfsClient(url);
+    if (instances[url]) {
+        return instances[url];
     }
-    return IpfsClient.instances[url];
+    if (url.startsWith('pinata://')) {
+        const [apiKey, secret] = url.substring(8).split(':');
+        instances[url] = new PinatapfsClient(apiKey, secret);
+    }
+    else {
+        instances[url] = new SimpleIpfsClient(url);
+    }
+    return instances[url];
 };
