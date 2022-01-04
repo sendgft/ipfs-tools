@@ -8,6 +8,7 @@ export declare const getMeta: () => {
 };
 interface Params {
     api: string;
+    gateway: string;
 }
-export declare const execute: ({ api }: Params) => Promise<void>;
+export declare const execute: ({ api, gateway }: Params) => Promise<void>;
 export {};

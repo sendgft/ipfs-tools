@@ -47,6 +47,7 @@
     "command-line-usage": "^6.1.1",
     "execa": "4",
     "glob": "^7.2.0",
+    "got": "11",
     "ipfs-http-client": "^55.0.0"
   }
 }
