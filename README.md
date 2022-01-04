@@ -57,18 +57,25 @@ This will start a local IPFS daemon in *test* mode. The endpoints will be:
 
 _Note: Ensure the [IPFS daemon software](https://ipfs.io/) is installed_.
 
-**upload-default-metadata**
+**upload-defaults**
 
 ```
-yarn ipfs-tools upload-default-metadata --api URL
+yarn ipfs-tools upload-defaults --api URL --gateway URL
 ```
 
-This uploads default metadata to IPFS and returns the CID.
+This uploads default images and metadata to IPFS and returns the relevant CIDs and URLs for use with the [backend](https://github.com/sendgft/dapp).
+
+Specifically, this uploads:
+
+* Default image for unopened GFTs
+* Default image for opened GFTs
+* JSON metadata for unopened GFT
 
 Parameter info:
 
 ```
-  --api URL             IPFS API endpoint URL.                  
+  --api URL       IPFS API endpoint URL. 
+  --gateway URL   IPFS gateway base URL. 
 ```
 
 **help**
