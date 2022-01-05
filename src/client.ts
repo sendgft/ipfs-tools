@@ -1,32 +1,15 @@
-import { Buffer } from 'buffer'
+import fs from 'fs'
 import { create, IPFSHTTPClient } from 'ipfs-http-client'
+import pinataSDK, { PinataClient } from '@pinata/sdk'
 
-export class IpfsClient {
-  public static instances: Record<string, IpfsClient> = {}
-  private _client: IPFSHTTPClient
-
-  /**
-   * Constructor.
-   * 
-   * @param url The IFPS API endpoint.
-   */
-  constructor(url: string) {
-    this._client = create({ url, timeout: 10000 })
-  }
-
+interface IpfsClient {
   /**
    * Upload string to IPFS.
    * 
-   * @param str The string.
-   * @param filePath The file path to upload at.
+   * @param filePath The file path to upload from.
    * @returns CID.
    */
-  async uploadString(str: string, filePath?: string) {
-    return this._client.add({
-      path: filePath,
-      content: Buffer.from(str)
-    })
-  }
+  uploadFile: (filePath: string) => Promise<string>;
 
   /**
    * Upload JSON to IPFS.
@@ -35,11 +18,52 @@ export class IpfsClient {
    * @param filePath The file path to upload at.
    * @returns CID.
    */
-  async uploadJson(json: object, filePath?: string) {
-    return this.uploadString(JSON.stringify(json, null, 2), filePath)
+  uploadJson: (json: object) => Promise<string>
+}
+
+class SimpleIpfsClient implements IpfsClient {
+  private _client: IPFSHTTPClient
+
+  constructor(url: string) {
+    this._client = create({ url, timeout: 10000 })
+  }
+
+  async uploadFile(filePath: string) {
+    const content = fs.readFileSync(filePath, { encoding: 'utf-8' })
+    const { cid } = await this._client.add({ content })
+    return `${cid}`
+  }
+
+  async uploadJson (json: object) {
+    const { cid } = await this._client.add({ 
+      content: Buffer.from(JSON.stringify(json, null, 2))
+    })
+    return `${cid}`
   }
 }
 
+
+class PinataIpfsClient implements IpfsClient {
+  private _pinata: PinataClient
+
+  constructor(apiKey: string, secret: string) {
+    this._pinata = pinataSDK(apiKey, secret)
+  }
+
+  async uploadFile(filePath: string) {
+    const str = fs.createReadStream(filePath, 'utf-8')
+    const { IpfsHash } = await this._pinata.pinFileToIPFS(str)
+    return IpfsHash
+  }
+
+  async uploadJson(json: object) {
+    const { IpfsHash } = await this._pinata.pinJSONToIPFS(json)
+    return IpfsHash
+  }
+}
+
+
+const instances: Record <string, IpfsClient> = {}
 
 /**
  * Get IPFS client instance.
@@ -47,8 +71,16 @@ export class IpfsClient {
  * @returns {IpfsClient}
  */
 export const getIpfsClient = (url: string): IpfsClient => {
-  if (!IpfsClient.instances[url]) {
-    IpfsClient.instances[url] = new IpfsClient(url)
+  if (instances[url]) {
+    return instances[url]
   }
-  return IpfsClient.instances[url]
+
+  if (url.startsWith('pinata://')) {
+    const [ apiKey, secret ] = url.substring(9).split(':')
+    instances[url] = new PinataIpfsClient(apiKey, secret)
+  } else {
+    instances[url] = new SimpleIpfsClient(url)
+  }
+
+  return instances[url]
 }

@@ -35,16 +35,16 @@ const getMeta = () => ({
 });
 exports.getMeta = getMeta;
 const execute = ({ api, gateway }) => __awaiter(void 0, void 0, void 0, function* () {
-    const GFT_OPENED_SVG = fs_1.default.readFileSync(path_1.default.join(process.cwd(), 'data', 'gft-opened.svg'), 'utf-8');
-    const GFT_UNOPENED_SVG = fs_1.default.readFileSync(path_1.default.join(process.cwd(), 'data', 'gft-unopened.svg'), 'utf-8');
+    const GFT_OPENED_SVG = path_1.default.join(process.cwd(), 'data', 'gft-opened.svg');
+    const GFT_UNOPENED_SVG = path_1.default.join(process.cwd(), 'data', 'gft-unopened.svg');
     const ipfsClient = (0, __1.getIpfsClient)(api);
     const openedGfImgCid = yield (0, utils_1.tryCatch)('Upload "opened GFT" image to IPFS', () => __awaiter(void 0, void 0, void 0, function* () {
-        const { cid } = yield ipfsClient.uploadString(GFT_OPENED_SVG);
+        const cid = yield ipfsClient.uploadFile(GFT_OPENED_SVG);
         (0, utils_1.log)(`Opened GFT image CID: ${cid}`);
         return cid;
     }));
     const unopenedGfImgCid = yield (0, utils_1.tryCatch)('Upload "unopened GFT" image to IPFS', () => __awaiter(void 0, void 0, void 0, function* () {
-        const { cid } = yield ipfsClient.uploadString(GFT_UNOPENED_SVG);
+        const cid = yield ipfsClient.uploadFile(GFT_UNOPENED_SVG);
         (0, utils_1.log)(`Unopened GFT image CID: ${cid}`);
         return cid;
     }));
@@ -54,21 +54,23 @@ const execute = ({ api, gateway }) => __awaiter(void 0, void 0, void 0, function
     const openedGfImgUrl = `${gateway}${openedGfImgCid}`;
     const unopenedGfImgUrl = `${gateway}${unopenedGfImgCid}`;
     // check gateway access
-    yield (0, utils_1.tryCatch)('Check that "opened GFT" image is available on the gateway', () => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, utils_1.tryCatch)(`Check that "opened GFT" image exists: ${openedGfImgUrl}`, () => __awaiter(void 0, void 0, void 0, function* () {
         const ret = yield (0, got_1.default)(openedGfImgUrl);
-        if (ret.body !== GFT_OPENED_SVG) {
+        const expected = fs_1.default.readFileSync(GFT_OPENED_SVG, { encoding: 'utf-8' }).toString();
+        if (ret.body !== expected) {
             throw new Error(`Unable to verify "opened GFT" image via gateway: ${openedGfImgUrl}`);
         }
     }));
-    yield (0, utils_1.tryCatch)('Check that "unopened GFT" image is available on the gateway', () => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, utils_1.tryCatch)(`Check that "unopened GFT" image exists: ${unopenedGfImgUrl}`, () => __awaiter(void 0, void 0, void 0, function* () {
         const ret = yield (0, got_1.default)(unopenedGfImgUrl);
-        if (ret.body !== GFT_UNOPENED_SVG) {
+        const expected = fs_1.default.readFileSync(GFT_UNOPENED_SVG, { encoding: 'utf-8' }).toString();
+        if (ret.body !== expected) {
             throw new Error(`Unable to verify "unopened GFT" image via gateway: ${unopenedGfImgUrl}`);
         }
     }));
     // upload metadata
     const cid = yield (0, utils_1.tryCatch)('Upload metadata to IPFS', () => __awaiter(void 0, void 0, void 0, function* () {
-        const { cid } = yield ipfsClient.uploadJson({
+        const cid = yield ipfsClient.uploadJson({
             name: 'Unopened GFT',
             description: 'This is an unopened GFT sent via https://gft.xyz',
             image: openedGfImgUrl,
