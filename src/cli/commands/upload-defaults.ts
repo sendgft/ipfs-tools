@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import got from 'got'
 import { getIpfsClient } from '../..'
-import { log, tryCatch } from '../utils'
+import { log, tryCatch } from '../../utils'
 
 export const getMeta = () => ({
   summary: 'Write sendGFT default metadata to IPFS and on-chain contract.',

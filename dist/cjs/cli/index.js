@@ -17,7 +17,7 @@ const glob_1 = __importDefault(require("glob"));
 const path_1 = __importDefault(require("path"));
 const command_line_args_1 = __importDefault(require("command-line-args"));
 const command_line_usage_1 = __importDefault(require("command-line-usage"));
-const utils_1 = require("./utils");
+const utils_1 = require("../utils");
 // load commands
 const COMMANDS = glob_1.default.sync(path_1.default.join(__dirname, 'commands', '*.js')).reduce((m, file) => {
     m[path_1.default.basename(file, '.js')] = require(file);

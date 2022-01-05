@@ -12,7 +12,7 @@ import glob from 'glob';
 import path from 'path';
 import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
-import { exit, logError } from './utils';
+import { exit, logError } from '../utils';
 // load commands
 const COMMANDS = glob.sync(path.join(__dirname, 'commands', '*.js')).reduce((m, file) => {
     m[path.basename(file, '.js')] = require(file);

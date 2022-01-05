@@ -7,42 +7,44 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Readable } from 'stream';
-import { Buffer } from 'buffer';
+import fs from 'fs';
 import { create } from 'ipfs-http-client';
 import pinataSDK from '@pinata/sdk';
 class SimpleIpfsClient {
     constructor(url) {
         this._client = create({ url, timeout: 10000 });
     }
-    uploadString(str) {
+    uploadFile(filePath) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { cid } = yield this._client.add({
-                content: Buffer.from(str)
-            });
+            const content = fs.readFileSync(filePath, { encoding: 'utf-8' });
+            const { cid } = yield this._client.add({ content });
             return `${cid}`;
         });
     }
     uploadJson(json) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.uploadString(JSON.stringify(json, null, 2));
+            const { cid } = yield this._client.add({
+                content: Buffer.from(JSON.stringify(json, null, 2))
+            });
+            return `${cid}`;
         });
     }
 }
-class PinatapfsClient {
+class PinataIpfsClient {
     constructor(apiKey, secret) {
         this._pinata = pinataSDK(apiKey, secret);
     }
-    uploadString(str) {
+    uploadFile(filePath) {
         return __awaiter(this, void 0, void 0, function* () {
-            const strStream = Readable.from(str);
-            const { IpfsHash } = yield this._pinata.pinFileToIPFS(strStream);
+            const str = fs.createReadStream(filePath, 'utf-8');
+            const { IpfsHash } = yield this._pinata.pinFileToIPFS(str);
             return IpfsHash;
         });
     }
     uploadJson(json) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.uploadString(JSON.stringify(json, null, 2));
+            const { IpfsHash } = yield this._pinata.pinJSONToIPFS(json);
+            return IpfsHash;
         });
     }
 }
@@ -57,8 +59,8 @@ export const getIpfsClient = (url) => {
         return instances[url];
     }
     if (url.startsWith('pinata://')) {
-        const [apiKey, secret] = url.substring(8).split(':');
-        instances[url] = new PinatapfsClient(apiKey, secret);
+        const [apiKey, secret] = url.substring(9).split(':');
+        instances[url] = new PinataIpfsClient(apiKey, secret);
     }
     else {
         instances[url] = new SimpleIpfsClient(url);

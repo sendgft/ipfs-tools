@@ -17,7 +17,7 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const got_1 = __importDefault(require("got"));
 const __1 = require("../..");
-const utils_1 = require("../utils");
+const utils_1 = require("../../utils");
 const getMeta = () => ({
     summary: 'Write sendGFT default metadata to IPFS and on-chain contract.',
     params: [
