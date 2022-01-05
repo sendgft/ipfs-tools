@@ -44,7 +44,7 @@ const { cid2 } = await client.uploadJson({ test: true }, '/file.txt')
 
 ## CLI Commands
 
-**daemon**
+### daemon
 
 ```
 yarn ipfs-tools daemon
@@ -57,7 +57,7 @@ This will start a local IPFS daemon in *test* mode. The endpoints will be:
 
 _Note: Ensure the [IPFS daemon software](https://ipfs.io/) is installed_.
 
-**upload-defaults**
+### upload-defaults
 
 ```
 yarn ipfs-tools upload-defaults --api URL --gateway URL
@@ -78,7 +78,20 @@ Parameter info:
   --gateway URL   IPFS gateway base URL. 
 ```
 
-**help**
+**Example: upload to local IPFS daemon**
+
+```shell
+yarn ipfs-tools upload-defaults --api http://127.0.0.1:5001/api/v0 --gateway http://127.0.0.1:5002/ipfs
+```
+
+**Example: upload to Pinata**
+
+```shell
+yarn ipfs-tools upload-defaults --api pinata://<pinata api key>:<pinata secret key> --gateway https://gateway.pinata.cloud/ipfs
+```
+
+
+### help
 
 Get help on all available commands.
 
