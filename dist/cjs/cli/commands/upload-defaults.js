@@ -73,7 +73,7 @@ const execute = ({ api, gateway }) => __awaiter(void 0, void 0, void 0, function
         const cid = yield ipfsClient.uploadJson({
             name: 'Unopened GFT',
             description: 'This is an unopened GFT sent via https://gft.xyz',
-            image: openedGfImgUrl,
+            image: unopenedGfImgUrl,
         });
         (0, utils_1.log)(`Unopened GFT metadata CID: ${cid}`);
         return cid;

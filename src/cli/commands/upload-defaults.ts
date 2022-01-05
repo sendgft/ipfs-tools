@@ -71,7 +71,7 @@ export const execute = async ({ api, gateway }: Params) => {
     const cid = await ipfsClient.uploadJson({
       name: 'Unopened GFT',
       description: 'This is an unopened GFT sent via https://gft.xyz',
-      image: openedGfImgUrl,
+      image: unopenedGfImgUrl,
     })
     log(`Unopened GFT metadata CID: ${cid}`)
     return cid
