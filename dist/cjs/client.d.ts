@@ -1,12 +1,11 @@
-declare abstract class IpfsClient {
+interface IpfsClient {
     /**
      * Upload string to IPFS.
      *
-     * @param str The string.
-     * @param filePath The file path to upload at.
+     * @param filePath The file path to upload from.
      * @returns CID.
      */
-    uploadString(str: string): Promise<string>;
+    uploadFile: (filePath: string) => Promise<string>;
     /**
      * Upload JSON to IPFS.
      *
@@ -14,7 +13,7 @@ declare abstract class IpfsClient {
      * @param filePath The file path to upload at.
      * @returns CID.
      */
-    uploadJson(json: object): Promise<string>;
+    uploadJson: (json: object) => Promise<string>;
 }
 /**
  * Get IPFS client instance.
