@@ -79,6 +79,6 @@ const execute = ({ api, gateway }) => __awaiter(void 0, void 0, void 0, function
         return cid;
     }));
     (0, utils_1.log)(`Default metadata CID: ${cid}`);
-    (0, utils_1.log)(`Opened GFT image URL: ${openedGfImgUrl}`);
+    (0, utils_1.log)(`Opened GFT image CID: ${openedGfImgCid}`);
 });
 exports.execute = execute;

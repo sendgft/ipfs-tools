@@ -78,5 +78,5 @@ export const execute = async ({ api, gateway }: Params) => {
   })
 
   log(`Default metadata CID: ${cid}`)
-  log(`Opened GFT image URL: ${openedGfImgUrl}`)
+  log(`Opened GFT image CID: ${openedGfImgCid}`)
 }
