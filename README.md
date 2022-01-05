@@ -87,7 +87,7 @@ yarn ipfs-tools upload-defaults --api http://127.0.0.1:5001/api/v0 --gateway htt
 **Example: upload to Pinata**
 
 ```shell
-yarn ipfs-tools upload-defaults --api pinata://<pinata api key>:<pinata secret key> --gateway https://gateway.pinata.cloud/ipfs
+yarn ipfs-tools upload-defaults --api pinata://<pinata api key>:<pinata secret key> --gateway https://ipfs.gft.xyz/ipfs
 ```
 
 
