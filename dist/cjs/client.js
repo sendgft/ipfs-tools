@@ -16,18 +16,69 @@ exports.getIpfsClient = void 0;
 const fs_1 = __importDefault(require("fs"));
 const ipfs_http_client_1 = require("ipfs-http-client");
 const sdk_1 = __importDefault(require("@pinata/sdk"));
-class SimpleIpfsClient {
+const got_1 = __importDefault(require("got"));
+class IpfsClient {
+    /**
+     * Upload file to IPFS.
+     *
+     * @param filePath The file path to upload from.
+     * @param options upload options.
+     * @returns CID.
+     */
+    uploadFile(filePath, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const cid = yield this._uploadFile(filePath);
+            yield this._postProcessUpload(cid, options);
+            return cid;
+        });
+    }
+    /**
+     * Upload JSON to IPFS.
+     *
+     * @param json The JSON.
+     * @param options upload options.
+     * @returns CID.
+     */
+    uploadJson(json, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const cid = yield this._uploadJson(json);
+            yield this._postProcessUpload(cid, options);
+            return cid;
+        });
+    }
+    /**
+     * Post-process an upload.
+     *
+     * @param cid The CID.
+     * @param options upload options.
+     */
+    _postProcessUpload(cid, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (options === null || options === void 0 ? void 0 : options.verifyViaGateway) {
+                const url = `${options.verifyViaGateway}${cid}`;
+                try {
+                    yield (0, got_1.default)(url); // this will throw if there is an error
+                }
+                catch (err) {
+                    throw new Error(`Unable to verify existence of CID via gateway: ${url}`);
+                }
+            }
+        });
+    }
+}
+class SimpleIpfsClient extends IpfsClient {
     constructor(url) {
+        super();
         this._client = (0, ipfs_http_client_1.create)({ url, timeout: 10000 });
     }
-    uploadFile(filePath) {
+    _uploadFile(filePath) {
         return __awaiter(this, void 0, void 0, function* () {
             const content = fs_1.default.readFileSync(filePath, { encoding: 'utf-8' });
             const { cid } = yield this._client.add({ content });
             return `${cid}`;
         });
     }
-    uploadJson(json) {
+    _uploadJson(json) {
         return __awaiter(this, void 0, void 0, function* () {
             const { cid } = yield this._client.add({
                 content: Buffer.from(JSON.stringify(json, null, 2))
@@ -36,18 +87,19 @@ class SimpleIpfsClient {
         });
     }
 }
-class PinataIpfsClient {
+class PinataIpfsClient extends IpfsClient {
     constructor(apiKey, secret) {
+        super();
         this._pinata = (0, sdk_1.default)(apiKey, secret);
     }
-    uploadFile(filePath) {
+    _uploadFile(filePath) {
         return __awaiter(this, void 0, void 0, function* () {
             const str = fs_1.default.createReadStream(filePath, 'utf-8');
             const { IpfsHash } = yield this._pinata.pinFileToIPFS(str);
             return IpfsHash;
         });
     }
-    uploadJson(json) {
+    _uploadJson(json) {
         return __awaiter(this, void 0, void 0, function* () {
             const { IpfsHash } = yield this._pinata.pinJSONToIPFS(json);
             return IpfsHash;
