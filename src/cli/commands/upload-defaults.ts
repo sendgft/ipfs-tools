@@ -34,19 +34,24 @@ interface Params {
   gateway: string,
 }
 
-export const execute = async ({ folder, api, gateway }: Params) => {
+interface UploadDefaultsResult {
+  defaultMetadataCid: string,
+  openedGftImgCid: string, 
+}
+
+export const execute = async ({ folder, api, gateway }: Params): Promise<UploadDefaultsResult> => {
   const GFT_OPENED_SVG = path.join(folder, 'gft-opened.svg')
   const GFT_UNOPENED_SVG = path.join(folder, 'gft-unopened.svg')
 
   const ipfsClient = getIpfsClient(api)
 
-  const openedGfImgCid: string = await tryCatch('Upload "opened GFT" image to IPFS', async () => {
+  const openedGftImgCid: string = await tryCatch('Upload "opened GFT" image to IPFS', async () => {
     const cid = await ipfsClient.uploadFile(GFT_OPENED_SVG)
     log(`Opened GFT image CID: ${cid}`)
     return cid
   })
 
-  const unopenedGfImgCid: string = await tryCatch('Upload "unopened GFT" image to IPFS', async () => {
+  const unopenedGftImgCid: string = await tryCatch('Upload "unopened GFT" image to IPFS', async () => {
     const cid = await ipfsClient.uploadFile(GFT_UNOPENED_SVG)
     log(`Unopened GFT image CID: ${cid}`)
     return cid
@@ -56,8 +61,8 @@ export const execute = async ({ folder, api, gateway }: Params) => {
     gateway = `${gateway}/`
   }
   
-  const openedGfImgUrl = `${gateway}${openedGfImgCid}`
-  const unopenedGfImgUrl = `${gateway}${unopenedGfImgCid}`
+  const openedGfImgUrl = `${gateway}${openedGftImgCid}`
+  const unopenedGfImgUrl = `${gateway}${unopenedGftImgCid}`
   
   // check gateway access
   await tryCatch(`Check that "opened GFT" image exists: ${openedGfImgUrl}`, async () => {
@@ -76,7 +81,7 @@ export const execute = async ({ folder, api, gateway }: Params) => {
   })
     
   // upload metadata
-  const cid: string = await tryCatch('Upload metadata to IPFS', async () => {
+  const defaultMetadataCid: string = await tryCatch('Upload metadata to IPFS', async () => {
     const cid = await ipfsClient.uploadJson({
       name: 'Unopened GFT',
       description: 'This is an unopened GFT sent via https://gft.xyz',
@@ -86,6 +91,11 @@ export const execute = async ({ folder, api, gateway }: Params) => {
     return cid
   })
 
-  log(`Default metadata CID: ${cid}`)
-  log(`Opened GFT image CID: ${openedGfImgCid}`)
+  log(`Default metadata CID: ${defaultMetadataCid}`)
+  log(`Opened GFT image CID: ${openedGftImgCid}`)
+
+  return { 
+    defaultMetadataCid,
+    openedGftImgCid 
+  }
 }

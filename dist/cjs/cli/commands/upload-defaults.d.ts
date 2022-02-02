@@ -17,5 +17,9 @@ interface Params {
     api: string;
     gateway: string;
 }
-export declare const execute: ({ folder, api, gateway }: Params) => Promise<void>;
+interface UploadDefaultsResult {
+    defaultMetadataCid: string;
+    openedGftImgCid: string;
+}
+export declare const execute: ({ folder, api, gateway }: Params) => Promise<UploadDefaultsResult>;
 export {};

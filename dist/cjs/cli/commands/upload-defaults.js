@@ -46,12 +46,12 @@ const execute = ({ folder, api, gateway }) => __awaiter(void 0, void 0, void 0, 
     const GFT_OPENED_SVG = path_1.default.join(folder, 'gft-opened.svg');
     const GFT_UNOPENED_SVG = path_1.default.join(folder, 'gft-unopened.svg');
     const ipfsClient = (0, __1.getIpfsClient)(api);
-    const openedGfImgCid = yield (0, utils_1.tryCatch)('Upload "opened GFT" image to IPFS', () => __awaiter(void 0, void 0, void 0, function* () {
+    const openedGftImgCid = yield (0, utils_1.tryCatch)('Upload "opened GFT" image to IPFS', () => __awaiter(void 0, void 0, void 0, function* () {
         const cid = yield ipfsClient.uploadFile(GFT_OPENED_SVG);
         (0, utils_1.log)(`Opened GFT image CID: ${cid}`);
         return cid;
     }));
-    const unopenedGfImgCid = yield (0, utils_1.tryCatch)('Upload "unopened GFT" image to IPFS', () => __awaiter(void 0, void 0, void 0, function* () {
+    const unopenedGftImgCid = yield (0, utils_1.tryCatch)('Upload "unopened GFT" image to IPFS', () => __awaiter(void 0, void 0, void 0, function* () {
         const cid = yield ipfsClient.uploadFile(GFT_UNOPENED_SVG);
         (0, utils_1.log)(`Unopened GFT image CID: ${cid}`);
         return cid;
@@ -59,8 +59,8 @@ const execute = ({ folder, api, gateway }) => __awaiter(void 0, void 0, void 0, 
     if (gateway.substring(-1) !== '/') {
         gateway = `${gateway}/`;
     }
-    const openedGfImgUrl = `${gateway}${openedGfImgCid}`;
-    const unopenedGfImgUrl = `${gateway}${unopenedGfImgCid}`;
+    const openedGfImgUrl = `${gateway}${openedGftImgCid}`;
+    const unopenedGfImgUrl = `${gateway}${unopenedGftImgCid}`;
     // check gateway access
     yield (0, utils_1.tryCatch)(`Check that "opened GFT" image exists: ${openedGfImgUrl}`, () => __awaiter(void 0, void 0, void 0, function* () {
         const ret = yield (0, got_1.default)(openedGfImgUrl);
@@ -77,7 +77,7 @@ const execute = ({ folder, api, gateway }) => __awaiter(void 0, void 0, void 0, 
         }
     }));
     // upload metadata
-    const cid = yield (0, utils_1.tryCatch)('Upload metadata to IPFS', () => __awaiter(void 0, void 0, void 0, function* () {
+    const defaultMetadataCid = yield (0, utils_1.tryCatch)('Upload metadata to IPFS', () => __awaiter(void 0, void 0, void 0, function* () {
         const cid = yield ipfsClient.uploadJson({
             name: 'Unopened GFT',
             description: 'This is an unopened GFT sent via https://gft.xyz',
@@ -86,7 +86,11 @@ const execute = ({ folder, api, gateway }) => __awaiter(void 0, void 0, void 0, 
         (0, utils_1.log)(`Unopened GFT metadata CID: ${cid}`);
         return cid;
     }));
-    (0, utils_1.log)(`Default metadata CID: ${cid}`);
-    (0, utils_1.log)(`Opened GFT image CID: ${openedGfImgCid}`);
+    (0, utils_1.log)(`Default metadata CID: ${defaultMetadataCid}`);
+    (0, utils_1.log)(`Opened GFT image CID: ${openedGftImgCid}`);
+    return {
+        defaultMetadataCid,
+        openedGftImgCid
+    };
 });
 exports.execute = execute;
