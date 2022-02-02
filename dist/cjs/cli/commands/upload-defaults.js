@@ -22,21 +22,29 @@ const getMeta = () => ({
     summary: 'Write sendGFT default metadata to IPFS and on-chain contract.',
     params: [
         {
+            name: 'folder',
+            typeLabel: '{underline path}',
+            description: 'The path to the data folder.',
+            defaultValue: path_1.default.join(process.cwd(), 'data'),
+        },
+    ],
+    options: [
+        {
             name: 'api',
-            typeLabel: '{underline URL}',
-            description: 'IPFS API endpoint URL.'
+            description: 'IPFS API endpoint URL.',
+            defaultValue: 'http://127.0.0.1:5001/api/v0',
         },
         {
             name: 'gateway',
-            typeLabel: '{underline URL}',
-            description: 'IPFS gateway base URL.'
+            description: 'IPFS gateway base URL.',
+            defaultValue: 'http://127.0.0.1:5002/ipfs',
         },
     ]
 });
 exports.getMeta = getMeta;
-const execute = ({ api, gateway }) => __awaiter(void 0, void 0, void 0, function* () {
-    const GFT_OPENED_SVG = path_1.default.join(process.cwd(), 'data', 'gft-opened.svg');
-    const GFT_UNOPENED_SVG = path_1.default.join(process.cwd(), 'data', 'gft-unopened.svg');
+const execute = ({ folder, api, gateway }) => __awaiter(void 0, void 0, void 0, function* () {
+    const GFT_OPENED_SVG = path_1.default.join(folder, 'gft-opened.svg');
+    const GFT_UNOPENED_SVG = path_1.default.join(folder, 'gft-unopened.svg');
     const ipfsClient = (0, __1.getIpfsClient)(api);
     const openedGfImgCid = yield (0, utils_1.tryCatch)('Upload "opened GFT" image to IPFS', () => __awaiter(void 0, void 0, void 0, function* () {
         const cid = yield ipfsClient.uploadFile(GFT_OPENED_SVG);

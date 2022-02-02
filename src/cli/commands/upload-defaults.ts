@@ -8,26 +8,35 @@ export const getMeta = () => ({
   summary: 'Write sendGFT default metadata to IPFS and on-chain contract.',
   params: [
     {
+      name: 'folder',
+      typeLabel: '{underline path}',
+      description: 'The path to the data folder.',
+      defaultValue: path.join(process.cwd(), 'data'),
+    },
+  ],
+  options: [
+    {
       name: 'api',
-      typeLabel: '{underline URL}',
-      description: 'IPFS API endpoint URL.'
+      description: 'IPFS API endpoint URL.',
+      defaultValue: 'http://127.0.0.1:5001/api/v0',
     },
     {
       name: 'gateway',
-      typeLabel: '{underline URL}',
-      description: 'IPFS gateway base URL.'
+      description: 'IPFS gateway base URL.',
+      defaultValue: 'http://127.0.0.1:5002/ipfs',
     },
   ]  
 })
 
 interface Params {
+  folder: string,
   api: string,
   gateway: string,
 }
 
-export const execute = async ({ api, gateway }: Params) => {
-  const GFT_OPENED_SVG = path.join(process.cwd(), 'data', 'gft-opened.svg')
-  const GFT_UNOPENED_SVG = path.join(process.cwd(), 'data', 'gft-unopened.svg')
+export const execute = async ({ folder, api, gateway }: Params) => {
+  const GFT_OPENED_SVG = path.join(folder, 'gft-opened.svg')
+  const GFT_UNOPENED_SVG = path.join(folder, 'gft-unopened.svg')
 
   const ipfsClient = getIpfsClient(api)
 

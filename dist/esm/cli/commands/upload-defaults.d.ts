@@ -4,6 +4,7 @@ export declare const getMeta: () => {
         name: string;
         typeLabel: string;
         description: string;
+        defaultOption: string;
     }[];
 };
 interface Params {

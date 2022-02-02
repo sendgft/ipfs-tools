@@ -18,12 +18,14 @@ export const getMeta = () => ({
         {
             name: 'api',
             typeLabel: '{underline URL}',
-            description: 'IPFS API endpoint URL.'
+            description: 'IPFS API endpoint URL.',
+            defaultOption: ';http://127.0.0.1:5001/api/v0',
         },
         {
             name: 'gateway',
             typeLabel: '{underline URL}',
-            description: 'IPFS gateway base URL.'
+            description: 'IPFS gateway base URL.',
+            defaultOption: 'http://127.0.0.1:5002/ipfs',
         },
     ]
 });
