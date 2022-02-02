@@ -4,7 +4,6 @@
   "private": true,
   "description": "IPFS tools for sendGFT",
   "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
   "types": "dist/cjs/index.d.ts",
   "bin": "bin/ipfs-tools",
   "files": [
@@ -16,7 +15,7 @@
     "package-lock.json"
   ],
   "scripts": {
-    "build": "tsc && tsc -p tsconfig-esm.json",
+    "build": "tsc",
     "watch": "tsc --watch",
     "ipfs-tools": "bin/ipfs-tools"
   },
@@ -49,6 +48,12 @@
     "execa": "4",
     "glob": "^7.2.0",
     "got": "11",
-    "ipfs-http-client": "^55.0.0"
+    "ipfs-http-client": "^56.0.0"
+  },
+  "resolutions": {
+    "ipfs-http-client/**/ipfs-utils": "9.0.2"
+  },  
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
