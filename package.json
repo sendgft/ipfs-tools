@@ -52,8 +52,5 @@
   },
   "resolutions": {
     "ipfs-http-client/**/ipfs-utils": "9.0.2"
-  },
-  "engines": {
-    "node": ">=14.0.0"
   }
 }
