@@ -48,10 +48,11 @@
     "execa": "4",
     "glob": "^7.2.0",
     "got": "11",
-    "ipfs-http-client": "50"
+    "ipfs-http-client": "52",
+    "ipfs-utils": "8.1.6"
   },
   "resolutions": {
-    "ipfs-http-client/**/ipfs-utils": "9.0.2"
+    "ipfs-http-client/**/ipfs-utils": "8.1.6"
   },
   "engines": {
     "node": ">=14.0.0"

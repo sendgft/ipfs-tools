@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { create, IPFSHTTPClient } from 'ipfs-http-client'
+import { create } from 'ipfs-http-client'
 import pinataSDK, { PinataClient } from '@pinata/sdk'
 import got from 'got'
 
@@ -72,7 +72,7 @@ abstract class IpfsClient {
 }
 
 class SimpleIpfsClient extends IpfsClient {
-  private _client: IPFSHTTPClient
+  private _client: any
 
   constructor(url: string) {
     super()
