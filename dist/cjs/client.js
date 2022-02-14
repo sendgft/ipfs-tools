@@ -14,9 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIpfsClient = void 0;
 const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const ipfs_http_client_1 = require("ipfs-http-client");
 const sdk_1 = __importDefault(require("@pinata/sdk"));
 const got_1 = __importDefault(require("got"));
+const _getFilename = (filePath) => filePath.substring(filePath.lastIndexOf('/') + 1);
 class IpfsClient {
     /**
      * Upload file to IPFS.
@@ -27,9 +29,11 @@ class IpfsClient {
      */
     uploadFile(filePath, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const cid = yield this._uploadFile(filePath);
-            yield this._postProcessUpload(cid, options);
-            return cid;
+            // extract extension
+            filePath = path_1.default.resolve(filePath);
+            const ret = yield this._uploadFile(filePath);
+            yield this._postProcessUpload(ret, options);
+            return ret;
         });
     }
     /**
@@ -41,21 +45,21 @@ class IpfsClient {
      */
     uploadJson(json, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const cid = yield this._uploadJson(json);
-            yield this._postProcessUpload(cid, options);
-            return cid;
+            const ret = yield this._uploadJson(json);
+            yield this._postProcessUpload(ret, options);
+            return ret;
         });
     }
     /**
      * Post-process an upload.
      *
-     * @param cid The CID.
+     * @param result The result.
      * @param options upload options.
      */
-    _postProcessUpload(cid, options) {
+    _postProcessUpload(result, options) {
         return __awaiter(this, void 0, void 0, function* () {
             if (options === null || options === void 0 ? void 0 : options.verifyViaGateway) {
-                const url = `${options.verifyViaGateway}${cid}`;
+                const url = `${options.verifyViaGateway}${result.path}`;
                 try {
                     yield (0, got_1.default)(url); // this will throw if there is an error
                 }
@@ -73,9 +77,9 @@ class SimpleIpfsClient extends IpfsClient {
     }
     _uploadFile(filePath) {
         return __awaiter(this, void 0, void 0, function* () {
-            const content = fs_1.default.readFileSync(filePath, { encoding: 'utf-8' });
-            const { cid } = yield this._client.add({ content });
-            return `${cid}`;
+            const name = _getFilename(filePath);
+            const { cid } = yield this._client.add({ content: fs_1.default.createReadStream(filePath) });
+            return { cid, path: cid };
         });
     }
     _uploadJson(json) {
@@ -83,7 +87,7 @@ class SimpleIpfsClient extends IpfsClient {
             const { cid } = yield this._client.add({
                 content: Buffer.from(JSON.stringify(json, null, 2))
             });
-            return `${cid}`;
+            return { cid, path: cid };
         });
     }
 }
@@ -94,15 +98,14 @@ class PinataIpfsClient extends IpfsClient {
     }
     _uploadFile(filePath) {
         return __awaiter(this, void 0, void 0, function* () {
-            const str = fs_1.default.createReadStream(filePath, 'utf-8');
-            const { IpfsHash } = yield this._pinata.pinFileToIPFS(str);
-            return IpfsHash;
+            const { IpfsHash } = yield this._pinata.pinFromFS(filePath);
+            return { cid: IpfsHash, path: IpfsHash };
         });
     }
     _uploadJson(json) {
         return __awaiter(this, void 0, void 0, function* () {
             const { IpfsHash } = yield this._pinata.pinJSONToIPFS(json);
-            return IpfsHash;
+            return { cid: IpfsHash, path: IpfsHash };
         });
     }
 }

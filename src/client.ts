@@ -1,13 +1,21 @@
 import fs from 'fs'
+import path from 'path'
 import { create } from 'ipfs-http-client'
 import pinataSDK, { PinataClient } from '@pinata/sdk'
 import got from 'got'
+
+const _getFilename = (filePath: string) => filePath.substring(filePath.lastIndexOf('/') + 1)
 
 export interface IpfsUploadOptions {
   /**
    * Gateway URL (with trailing slash) through which to verify the upload.
    */
   verifyViaGateway?: string
+}
+
+interface IpfsUploadResult {
+  cid: string,
+  path: string,
 }
 
 abstract class IpfsClient {
@@ -18,10 +26,12 @@ abstract class IpfsClient {
    * @param options upload options.
    * @returns CID.
    */
-  async uploadFile (filePath: string, options?: IpfsUploadOptions): Promise<string> {
-    const cid = await this._uploadFile(filePath)
-    await this._postProcessUpload(cid, options)
-    return cid
+  async uploadFile (filePath: string, options?: IpfsUploadOptions): Promise<IpfsUploadResult> {
+    // extract extension
+    filePath = path.resolve(filePath)
+    const ret = await this._uploadFile(filePath)
+    await this._postProcessUpload(ret, options)
+    return ret
   }
 
   /**
@@ -31,10 +41,10 @@ abstract class IpfsClient {
    * @param options upload options.
    * @returns CID.
    */
-  async uploadJson (json: object, options?: IpfsUploadOptions): Promise<string> {
-    const cid = await this._uploadJson(json)
-    await this._postProcessUpload(cid, options)
-    return cid
+  async uploadJson (json: object, options?: IpfsUploadOptions): Promise<IpfsUploadResult> {
+    const ret = await this._uploadJson(json)
+    await this._postProcessUpload(ret, options)
+    return ret
   }
 
   /**
@@ -43,7 +53,7 @@ abstract class IpfsClient {
    * @param filePath The file path to upload from.
    * @returns CID.
    */
-  protected abstract _uploadFile(filePath: string): Promise<string>
+  protected abstract _uploadFile(filePath: string): Promise<IpfsUploadResult>
 
   /**
    * Upload JSON to IPFS.
@@ -51,17 +61,17 @@ abstract class IpfsClient {
    * @param json The JSON.
    * @returns CID.
    */
-  protected abstract _uploadJson(json: object): Promise<string>
+  protected abstract _uploadJson(json: object): Promise<IpfsUploadResult>
 
   /**
    * Post-process an upload.
    * 
-   * @param cid The CID.
+   * @param result The result.
    * @param options upload options.
    */
-  protected async _postProcessUpload (cid: string, options?: IpfsUploadOptions) {
+  protected async _postProcessUpload (result: IpfsUploadResult, options?: IpfsUploadOptions) {
     if (options?.verifyViaGateway) {
-      const url = `${options.verifyViaGateway}${cid}`
+      const url = `${options.verifyViaGateway}${result.path}`
       try {
         await got(url) // this will throw if there is an error
       } catch (err) {
@@ -80,16 +90,16 @@ class SimpleIpfsClient extends IpfsClient {
   }
 
   async _uploadFile(filePath: string) {
-    const content = fs.readFileSync(filePath, { encoding: 'utf-8' })
-    const { cid } = await this._client.add({ content })
-    return `${cid}`
+    const name = _getFilename(filePath)
+    const { cid } = await this._client.add({ content: fs.createReadStream(filePath) })
+    return { cid, path: cid }
   }
 
   async _uploadJson(json: object) {
     const { cid } = await this._client.add({ 
       content: Buffer.from(JSON.stringify(json, null, 2))
     })
-    return `${cid}`
+    return { cid, path: cid }
   }
 }
 
@@ -103,14 +113,13 @@ class PinataIpfsClient extends IpfsClient {
   }
 
   async _uploadFile(filePath: string) {
-    const str = fs.createReadStream(filePath, 'utf-8')
-    const { IpfsHash } = await this._pinata.pinFileToIPFS(str)
-    return IpfsHash
+    const { IpfsHash } = await this._pinata.pinFromFS(filePath)
+    return { cid: IpfsHash, path: IpfsHash }
   }
 
   async _uploadJson(json: object) {
     const { IpfsHash } = await this._pinata.pinJSONToIPFS(json)
-    return IpfsHash
+    return { cid: IpfsHash, path: IpfsHash }
   }
 }
 
