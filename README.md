@@ -57,19 +57,13 @@ This will start a local IPFS daemon in *test* mode. The endpoints will be:
 
 _Note: Ensure the [IPFS daemon software](https://ipfs.io/) is installed_.
 
-### upload-defaults
+### upload
 
 ```
 yarn ipfs-tools upload-defaults --api URL --gateway URL
 ```
 
-This uploads default images and metadata to IPFS and returns the relevant CIDs and URLs for use with the [backend](https://github.com/sendgft/dapp).
-
-Specifically, this uploads:
-
-* Default image for unopened GFTs
-* Default image for opened GFTs
-* JSON metadata for unopened GFT
+This uploads a file to IPFS and returns the relevant CIDs and URLs for use.
 
 Parameter info:
 
@@ -81,13 +75,13 @@ Parameter info:
 **Example: upload to local IPFS daemon**
 
 ```shell
-yarn ipfs-tools upload-defaults --api http://127.0.0.1:5001/api/v0 --gateway http://127.0.0.1:5002/ipfs
+yarn ipfs-tools upload --file ./test.png --api http://127.0.0.1:5001/api/v0 --gateway http://127.0.0.1:5002/ipfs
 ```
 
 **Example: upload to Pinata**
 
 ```shell
-yarn ipfs-tools upload-defaults --api pinata://<pinata api key>:<pinata secret key> --gateway https://ipfs.gft.xyz/ipfs
+yarn ipfs-tools upload --file ./test.png --api pinata://<pinata api key>:<pinata secret key> --gateway https://ipfs.gft.xyz/ipfs
 ```
 
 

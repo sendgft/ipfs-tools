@@ -61,4 +61,6 @@ export const execute = async ({ file, api, gateway }: Params): Promise<void> => 
       throw new Error(`Unable to verify file image via gateway: ${url}`)
     }
   })
+
+  log(`Gateway URL = ${url}`)  
 }
