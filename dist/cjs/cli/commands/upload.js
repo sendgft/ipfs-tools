@@ -60,5 +60,6 @@ const execute = ({ file, api, gateway }) => __awaiter(void 0, void 0, void 0, fu
             throw new Error(`Unable to verify file image via gateway: ${url}`);
         }
     }));
+    (0, utils_1.log)(`Gateway URL = ${url}`);
 });
 exports.execute = execute;
