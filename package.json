@@ -1,7 +1,6 @@
 {
   "name": "@sendgft/ipfs-tools",
   "version": "1.0.0",
-  "private": true,
   "description": "IPFS tools for sendGFT",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -55,6 +54,6 @@
     "ipfs-http-client/**/ipfs-utils": "8.1.6"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   }
 }
