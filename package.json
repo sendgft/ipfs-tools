@@ -14,6 +14,7 @@
     "package-lock.json"
   ],
   "scripts": {
+    "prepare": "husky install",
     "build": "tsc",
     "watch": "tsc --watch",
     "ipfs-tools": "bin/ipfs-tools"
@@ -21,6 +22,16 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sendgft/ipfs-tools.git"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "keywords": [
     "ipfs",
@@ -37,9 +48,16 @@
   },
   "homepage": "https://github.com/sendgft/ipfs-tools#readme",
   "devDependencies": {
+    "@commitlint/cli": "^16.2.4",
+    "@commitlint/config-conventional": "^16.2.4",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@types/command-line-args": "^5.2.0",
     "@types/command-line-usage": "^5.0.2",
     "@types/glob": "^7.2.0",
+    "husky": "^8.0.1",
+    "standard-version": "^9.3.2",
     "typescript": "^4.5.4"
   },
   "dependencies": {
