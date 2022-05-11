@@ -4,20 +4,6 @@ IPFS tools for [sendgft](https://github.com/sendgft).
 
 This functions as both a library and CLI.
 
-## Development
-
-After cloning the repo you must build the code:
-
-```shell
-yarn build
-```
-
-To auto-rebuild on code changes:
-
-```shell
-yarn watch
-```
-
 
 ## Library
 
@@ -92,3 +78,28 @@ Get help on all available commands.
 ```
 yarn ipfs-tools help
 ```
+
+
+## Development
+
+After cloning the repo you must build the code:
+
+```shell
+yarn build
+```
+
+To auto-rebuild on code changes:
+
+```shell
+yarn watch
+```
+
+## Publishing releases
+
+```shell
+yarn release
+```
+
+## License
+
+MIT

@@ -17,7 +17,8 @@
     "prepare": "husky install",
     "build": "tsc",
     "watch": "tsc --watch",
-    "ipfs-tools": "bin/ipfs-tools"
+    "ipfs-tools": "bin/ipfs-tools",
+    "release": "yarn build && semantic-release"
   },
   "repository": {
     "type": "git",
@@ -42,7 +43,7 @@
     "access": "public"
   },
   "author": "Ramesh Nair <ram@hiddentao.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/sendgft/ipfs-tools/issues"
   },
