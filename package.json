@@ -27,6 +27,9 @@
     "sendgft",
     "gft"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Ramesh Nair <ram@hiddentao.com>",
   "license": "ISC",
   "bugs": {
