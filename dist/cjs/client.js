@@ -31,7 +31,7 @@ class IpfsClient {
         return __awaiter(this, void 0, void 0, function* () {
             // extract extension
             filePath = path_1.default.resolve(filePath);
-            const ret = yield this._uploadFile(filePath);
+            const ret = yield this._uploadFile(filePath, options);
             yield this._postProcessUpload(ret, options);
             return ret;
         });
@@ -75,11 +75,15 @@ class SimpleIpfsClient extends IpfsClient {
         super();
         this._client = (0, ipfs_http_client_1.create)({ url, timeout: 10000 });
     }
-    _uploadFile(filePath) {
+    _uploadFile(filePath, options) {
         return __awaiter(this, void 0, void 0, function* () {
             const name = _getFilename(filePath);
-            const { cid } = yield this._client.add({ content: fs_1.default.createReadStream(filePath) });
-            return { cid, path: cid };
+            const cidPath = (options === null || options === void 0 ? void 0 : options.wrapWithDirectory) ? `/root/${name}` : undefined;
+            const { cid } = yield this._client.add({
+                content: fs_1.default.createReadStream(filePath),
+                path: cidPath,
+            });
+            return { cid: cid, path: `${cid}${cidPath ? `/${name}` : ''}` };
         });
     }
     _uploadJson(json) {
@@ -96,10 +100,15 @@ class PinataIpfsClient extends IpfsClient {
         super();
         this._pinata = (0, sdk_1.default)(apiKey, secret);
     }
-    _uploadFile(filePath) {
+    _uploadFile(filePath, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { IpfsHash } = yield this._pinata.pinFromFS(filePath);
-            return { cid: IpfsHash, path: IpfsHash };
+            const name = _getFilename(filePath);
+            const { IpfsHash } = yield this._pinata.pinFromFS(filePath, {
+                pinataOptions: {
+                    wrapWithDirectory: !!(options === null || options === void 0 ? void 0 : options.wrapWithDirectory)
+                }
+            });
+            return { cid: IpfsHash, path: `${IpfsHash}${(options === null || options === void 0 ? void 0 : options.wrapWithDirectory) ? `/${name}` : ''}` };
         });
     }
     _uploadJson(json) {

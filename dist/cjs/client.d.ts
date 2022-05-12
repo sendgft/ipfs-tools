@@ -4,7 +4,15 @@ export interface IpfsUploadOptions {
      */
     verifyViaGateway?: string;
 }
-interface IpfsUploadResult {
+export interface IpfsFileUploadOptions extends IpfsUploadOptions {
+    /**
+     * Wrap upload in directory
+     */
+    wrapWithDirectory?: boolean;
+}
+export interface IpfsJsonUploadOptions extends IpfsUploadOptions {
+}
+export interface IpfsUploadResult {
     cid: string;
     path: string;
 }
@@ -16,7 +24,7 @@ declare abstract class IpfsClient {
      * @param options upload options.
      * @returns CID.
      */
-    uploadFile(filePath: string, options?: IpfsUploadOptions): Promise<IpfsUploadResult>;
+    uploadFile(filePath: string, options?: IpfsFileUploadOptions): Promise<IpfsUploadResult>;
     /**
      * Upload JSON to IPFS.
      *
@@ -24,14 +32,14 @@ declare abstract class IpfsClient {
      * @param options upload options.
      * @returns CID.
      */
-    uploadJson(json: object, options?: IpfsUploadOptions): Promise<IpfsUploadResult>;
+    uploadJson(json: object, options?: IpfsJsonUploadOptions): Promise<IpfsUploadResult>;
     /**
      * Upload file to IPFS.
      *
      * @param filePath The file path to upload from.
      * @returns CID.
      */
-    protected abstract _uploadFile(filePath: string): Promise<IpfsUploadResult>;
+    protected abstract _uploadFile(filePath: string, options?: IpfsFileUploadOptions): Promise<IpfsUploadResult>;
     /**
      * Upload JSON to IPFS.
      *
