@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/sendgft/ipfs-tools/compare/v1.0.0...v1.1.0) (2022-05-12)
+
+
+### Features
+
+* enable directory wrapping on ipfs ([9e00250](https://github.com/sendgft/ipfs-tools/commit/9e00250ad4a35fd6e32c9d1dcfa5d903253b3ae9))
+
 # 1.0.0 (2022-05-11)
 
 
