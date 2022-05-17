@@ -108,14 +108,14 @@ class SimpleIpfsClient extends IpfsClient {
       path: cidPath,
     })
 
-    return { cid: cid, path: `${cid}${cidPath ? `/${name}` : ''}` }
+    return { cid: `${cid}`, path: `${cid}${cidPath ? `/${name}` : ''}` }
   }
 
   async _uploadJson(json: object) {
     const { cid } = await this._client.add({ 
       content: Buffer.from(JSON.stringify(json, null, 2))
     })
-    return { cid, path: cid }
+    return { cid: `${cid}`, path: `${cid}` }
   }
 }
 
@@ -137,12 +137,12 @@ class PinataIpfsClient extends IpfsClient {
       }
     })
 
-    return { cid: IpfsHash, path: `${IpfsHash}${options?.wrapWithDirectory ? `/${name}` : ''}` }
+    return { cid: `${IpfsHash}`, path: `${IpfsHash}${options?.wrapWithDirectory ? `/${name}` : ''}` }
   }
 
   async _uploadJson(json: object) {
     const { IpfsHash } = await this._pinata.pinJSONToIPFS(json)
-    return { cid: IpfsHash, path: IpfsHash }
+    return { cid: `${IpfsHash}`, path: `${IpfsHash}` }
   }
 }
 

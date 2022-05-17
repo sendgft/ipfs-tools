@@ -83,7 +83,7 @@ class SimpleIpfsClient extends IpfsClient {
                 content: fs_1.default.createReadStream(filePath),
                 path: cidPath,
             });
-            return { cid: cid, path: `${cid}${cidPath ? `/${name}` : ''}` };
+            return { cid: `${cid}`, path: `${cid}${cidPath ? `/${name}` : ''}` };
         });
     }
     _uploadJson(json) {
@@ -91,7 +91,7 @@ class SimpleIpfsClient extends IpfsClient {
             const { cid } = yield this._client.add({
                 content: Buffer.from(JSON.stringify(json, null, 2))
             });
-            return { cid, path: cid };
+            return { cid: `${cid}`, path: `${cid}` };
         });
     }
 }
@@ -108,13 +108,13 @@ class PinataIpfsClient extends IpfsClient {
                     wrapWithDirectory: !!(options === null || options === void 0 ? void 0 : options.wrapWithDirectory)
                 }
             });
-            return { cid: IpfsHash, path: `${IpfsHash}${(options === null || options === void 0 ? void 0 : options.wrapWithDirectory) ? `/${name}` : ''}` };
+            return { cid: `${IpfsHash}`, path: `${IpfsHash}${(options === null || options === void 0 ? void 0 : options.wrapWithDirectory) ? `/${name}` : ''}` };
         });
     }
     _uploadJson(json) {
         return __awaiter(this, void 0, void 0, function* () {
             const { IpfsHash } = yield this._pinata.pinJSONToIPFS(json);
-            return { cid: IpfsHash, path: IpfsHash };
+            return { cid: `${IpfsHash}`, path: `${IpfsHash}` };
         });
     }
 }
