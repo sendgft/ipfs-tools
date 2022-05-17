@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/sendgft/ipfs-tools/compare/v1.1.0...v1.2.0) (2022-05-17)
+
+
+### Features
+
+* ensure returned CIDs are always strings ([158b86b](https://github.com/sendgft/ipfs-tools/commit/158b86b6ab66c93dfc60c19fb12811729b954ad5))
+
 # [1.1.0](https://github.com/sendgft/ipfs-tools/compare/v1.0.0...v1.1.0) (2022-05-12)
 
 
