@@ -26,6 +26,14 @@ declare abstract class IpfsClient {
      */
     uploadFile(filePath: string, options?: IpfsFileUploadOptions): Promise<IpfsUploadResult>;
     /**
+     * Upload folder and its subcontents to IPFS.
+     *
+     * @param folderPath The folder path to upload from.
+     * @param options upload options.
+     * @returns CID.
+     */
+    uploadFolder(folderPath: string, options?: IpfsUploadOptions): Promise<IpfsUploadResult>;
+    /**
      * Upload JSON to IPFS.
      *
      * @param json The JSON.
@@ -40,6 +48,13 @@ declare abstract class IpfsClient {
      * @returns CID.
      */
     protected abstract _uploadFile(filePath: string, options?: IpfsFileUploadOptions): Promise<IpfsUploadResult>;
+    /**
+     * Upload folder and its subcontents to IPFS.
+     *
+     * @param folderPath The folder path to upload from.
+     * @returns CID.
+     */
+    protected abstract _uploadFolder(folderPath: string, options?: IpfsUploadOptions): Promise<IpfsUploadResult>;
     /**
      * Upload JSON to IPFS.
      *

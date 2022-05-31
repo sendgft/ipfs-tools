@@ -12,9 +12,9 @@ export declare const getMeta: () => {
     }[];
 };
 interface Params {
-    file: string;
+    path: string;
     api: string;
     gateway: string;
 }
-export declare const execute: ({ file, api, gateway }: Params) => Promise<void>;
+export declare const execute: ({ path: fileOrFolder, api, gateway }: Params) => Promise<void>;
 export {};

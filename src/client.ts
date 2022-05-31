@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { create } from 'ipfs-http-client'
+import { create, globSource } from 'ipfs-http-client'
 import pinataSDK, { PinataClient } from '@pinata/sdk'
 import got from 'got'
 
@@ -45,6 +45,21 @@ abstract class IpfsClient {
   }
 
   /**
+   * Upload folder and its subcontents to IPFS.
+   * 
+   * @param folderPath The folder path to upload from.
+   * @param options upload options.
+   * @returns CID.
+   */
+  async uploadFolder(folderPath: string, options?: IpfsUploadOptions): Promise<IpfsUploadResult> {
+    // extract extension
+    folderPath = path.resolve(folderPath)
+    const ret = await this._uploadFolder(folderPath, options)
+    await this._postProcessUpload(ret, options)
+    return ret
+  }
+
+  /**
    * Upload JSON to IPFS.
    * 
    * @param json The JSON.
@@ -64,6 +79,14 @@ abstract class IpfsClient {
    * @returns CID.
    */
   protected abstract _uploadFile(filePath: string, options?: IpfsFileUploadOptions): Promise<IpfsUploadResult>
+
+  /**
+   * Upload folder and its subcontents to IPFS.
+   * 
+   * @param folderPath The folder path to upload from.
+   * @returns CID.
+   */
+  protected abstract _uploadFolder(folderPath: string, options?: IpfsUploadOptions): Promise<IpfsUploadResult>
 
   /**
    * Upload JSON to IPFS.
@@ -111,6 +134,23 @@ class SimpleIpfsClient extends IpfsClient {
     return { cid: `${cid}`, path: `${cid}${cidPath ? `/${name}` : ''}` }
   }
 
+  async _uploadFolder(folderPath: string, options?: IpfsUploadOptions): Promise<IpfsUploadResult> {
+    const iter = this._client.addAll(
+      globSource(folderPath, { recursive: true }),
+      { pin: true, wrapWithDirectory: true }
+    )
+
+    const ret = []
+
+    for await (const item of iter) {
+      ret.push(item)
+    }
+
+    const { cid } = ret[ret.length - 2]
+
+    return { cid: `${cid}`, path: `${cid}` }
+  }
+
   async _uploadJson(json: object) {
     const { cid } = await this._client.add({ 
       content: Buffer.from(JSON.stringify(json, null, 2))
@@ -138,6 +178,11 @@ class PinataIpfsClient extends IpfsClient {
     })
 
     return { cid: `${IpfsHash}`, path: `${IpfsHash}${options?.wrapWithDirectory ? `/${name}` : ''}` }
+  }
+
+  async _uploadFolder(folderPath: string, options?: IpfsUploadOptions): Promise<IpfsUploadResult> {
+    const { IpfsHash } = await this._pinata.pinFromFS(folderPath)
+    return { cid: `${IpfsHash}`, path: `${IpfsHash}` }
   }
 
   async _uploadJson(json: object) {

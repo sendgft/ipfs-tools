@@ -8,6 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -32,6 +39,22 @@ class IpfsClient {
             // extract extension
             filePath = path_1.default.resolve(filePath);
             const ret = yield this._uploadFile(filePath, options);
+            yield this._postProcessUpload(ret, options);
+            return ret;
+        });
+    }
+    /**
+     * Upload folder and its subcontents to IPFS.
+     *
+     * @param folderPath The folder path to upload from.
+     * @param options upload options.
+     * @returns CID.
+     */
+    uploadFolder(folderPath, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // extract extension
+            folderPath = path_1.default.resolve(folderPath);
+            const ret = yield this._uploadFolder(folderPath, options);
             yield this._postProcessUpload(ret, options);
             return ret;
         });
@@ -86,6 +109,28 @@ class SimpleIpfsClient extends IpfsClient {
             return { cid: `${cid}`, path: `${cid}${cidPath ? `/${name}` : ''}` };
         });
     }
+    _uploadFolder(folderPath, options) {
+        var e_1, _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const iter = this._client.addAll((0, ipfs_http_client_1.globSource)(folderPath, { recursive: true }), { pin: true, wrapWithDirectory: true });
+            const ret = [];
+            try {
+                for (var iter_1 = __asyncValues(iter), iter_1_1; iter_1_1 = yield iter_1.next(), !iter_1_1.done;) {
+                    const item = iter_1_1.value;
+                    ret.push(item);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (iter_1_1 && !iter_1_1.done && (_a = iter_1.return)) yield _a.call(iter_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            const { cid } = ret[ret.length - 2];
+            return { cid: `${cid}`, path: `${cid}` };
+        });
+    }
     _uploadJson(json) {
         return __awaiter(this, void 0, void 0, function* () {
             const { cid } = yield this._client.add({
@@ -109,6 +154,12 @@ class PinataIpfsClient extends IpfsClient {
                 }
             });
             return { cid: `${IpfsHash}`, path: `${IpfsHash}${(options === null || options === void 0 ? void 0 : options.wrapWithDirectory) ? `/${name}` : ''}` };
+        });
+    }
+    _uploadFolder(folderPath, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { IpfsHash } = yield this._pinata.pinFromFS(folderPath);
+            return { cid: `${IpfsHash}`, path: `${IpfsHash}` };
         });
     }
     _uploadJson(json) {

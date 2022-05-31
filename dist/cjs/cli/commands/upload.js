@@ -13,17 +13,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.getMeta = void 0;
+const path_1 = __importDefault(require("path"));
+const glob_1 = __importDefault(require("glob"));
 const fs_1 = __importDefault(require("fs"));
 const got_1 = __importDefault(require("got"));
 const __1 = require("../..");
 const utils_1 = require("../../utils");
 const getMeta = () => ({
-    summary: 'Upload a file to IPFS.',
+    summary: 'Upload a file or folder to IPFS.',
     params: [
         {
-            name: 'file',
+            name: 'path',
             typeLabel: '{underline path}',
-            description: 'The path to the file.',
+            description: 'The path to the file or folder.',
         },
     ],
     options: [
@@ -40,10 +42,17 @@ const getMeta = () => ({
     ]
 });
 exports.getMeta = getMeta;
-const execute = ({ file, api, gateway }) => __awaiter(void 0, void 0, void 0, function* () {
+const execute = ({ path: fileOrFolder, api, gateway }) => __awaiter(void 0, void 0, void 0, function* () {
     const ipfsClient = (0, __1.getIpfsClient)(api);
-    const ret = yield (0, utils_1.tryCatch)(`Upload "${file}" to IPFS`, () => __awaiter(void 0, void 0, void 0, function* () {
-        const ret = yield ipfsClient.uploadFile(file);
+    const isFolder = fs_1.default.lstatSync(fileOrFolder).isDirectory();
+    const ret = yield (0, utils_1.tryCatch)(`Upload "${fileOrFolder}" to IPFS`, () => __awaiter(void 0, void 0, void 0, function* () {
+        let ret;
+        if (isFolder) {
+            ret = yield ipfsClient.uploadFolder(fileOrFolder);
+        }
+        else {
+            ret = yield ipfsClient.uploadFile(fileOrFolder);
+        }
         (0, utils_1.log)(`CID = ${ret.cid}`);
         (0, utils_1.log)(`Path = ${ret.path}`);
         return ret;
@@ -53,9 +62,18 @@ const execute = ({ file, api, gateway }) => __awaiter(void 0, void 0, void 0, fu
     }
     const url = `${gateway}${ret.path}`;
     // check gateway access
-    yield (0, utils_1.tryCatch)(`Check that file can be served from gateway: ${url}`, () => __awaiter(void 0, void 0, void 0, function* () {
-        const ret = yield (0, got_1.default)(url);
-        const expected = fs_1.default.readFileSync(file, { encoding: 'utf-8' }).toString();
+    yield (0, utils_1.tryCatch)(`Check that content is served from gateway: ${url}`, () => __awaiter(void 0, void 0, void 0, function* () {
+        let ret, expected;
+        if (isFolder) {
+            const f = glob_1.default.sync(path_1.default.join(fileOrFolder, '*'), { absolute: true })[0];
+            const fn = path_1.default.basename(f);
+            ret = yield (0, got_1.default)(`${url}/${fn}`);
+            expected = fs_1.default.readFileSync(f, { encoding: 'utf-8' }).toString();
+        }
+        else {
+            ret = yield (0, got_1.default)(url);
+            expected = fs_1.default.readFileSync(fileOrFolder, { encoding: 'utf-8' }).toString();
+        }
         if (ret.body !== expected) {
             throw new Error(`Unable to verify file image via gateway: ${url}`);
         }

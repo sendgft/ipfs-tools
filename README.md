@@ -91,7 +91,7 @@ yarn build
 To auto-rebuild on code changes:
 
 ```shell
-yarn watch
+yarn build-watch
 ```
 
 ## Publishing releases

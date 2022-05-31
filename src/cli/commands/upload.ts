@@ -1,15 +1,17 @@
+import path from 'path'
+import glob from 'glob'
 import fs from 'fs'
 import got from 'got'
 import { getIpfsClient } from '../..'
 import { log, tryCatch } from '../../utils'
 
 export const getMeta = () => ({
-  summary: 'Upload a file to IPFS.',
+  summary: 'Upload a file or folder to IPFS.',
   params: [
     {
-      name: 'file',
+      name: 'path',
       typeLabel: '{underline path}',
-      description: 'The path to the file.',
+      description: 'The path to the file or folder.',
     },
   ],
   options: [
@@ -27,7 +29,7 @@ export const getMeta = () => ({
 })
 
 interface Params {
-  file: string,
+  path: string,
   api: string,
   gateway: string,
 }
@@ -37,11 +39,18 @@ interface UploadDefaultsResult {
   openedGftImgCid: string,
 }
 
-export const execute = async ({ file, api, gateway }: Params): Promise<void> => {
+export const execute = async ({ path: fileOrFolder, api, gateway }: Params): Promise<void> => {
   const ipfsClient = getIpfsClient(api)
 
-  const ret = await tryCatch(`Upload "${file}" to IPFS`, async () => {
-    const ret = await ipfsClient.uploadFile(file)
+  const isFolder = fs.lstatSync(fileOrFolder).isDirectory()
+
+  const ret = await tryCatch(`Upload "${fileOrFolder}" to IPFS`, async () => {
+    let ret
+    if (isFolder) {
+      ret = await ipfsClient.uploadFolder(fileOrFolder)
+    } else {
+      ret = await ipfsClient.uploadFile(fileOrFolder)
+    }
     log(`CID = ${ret.cid}`)
     log(`Path = ${ret.path}`)
     return ret
@@ -54,9 +63,18 @@ export const execute = async ({ file, api, gateway }: Params): Promise<void> => 
   const url = `${gateway}${ret.path}`
 
   // check gateway access
-  await tryCatch(`Check that file can be served from gateway: ${url}`, async () => {
-    const ret = await got(url)
-    const expected = fs.readFileSync(file, { encoding: 'utf-8' }).toString()
+  await tryCatch(`Check that content is served from gateway: ${url}`, async () => {
+    let ret, expected
+
+    if (isFolder) {
+      const f = glob.sync(path.join(fileOrFolder, '*'), { absolute: true })[0]
+      const fn = path.basename(f)
+      ret = await got(`${url}/${fn}`)
+      expected = fs.readFileSync(f, { encoding: 'utf-8' }).toString()
+    } else {
+      ret = await got(url)
+      expected = fs.readFileSync(fileOrFolder, { encoding: 'utf-8' }).toString()
+    }
     if (ret.body !== expected) {
       throw new Error(`Unable to verify file image via gateway: ${url}`)
     }

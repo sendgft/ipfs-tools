@@ -16,7 +16,7 @@
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",
-    "watch": "tsc --watch",
+    "build-watch": "tsc --watch",
     "ipfs-tools": "bin/ipfs-tools",
     "release": "yarn build && semantic-release"
   },
