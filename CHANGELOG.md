@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/sendgft/ipfs-tools/compare/v1.2.0...v1.3.0) (2022-05-31)
+
+
+### Features
+
+* enable folder uploads ([e8b2d5f](https://github.com/sendgft/ipfs-tools/commit/e8b2d5f5064ea2c473764c9a4f3d37bc2bdf7438))
+
 # [1.2.0](https://github.com/sendgft/ipfs-tools/compare/v1.1.0...v1.2.0) (2022-05-17)
 
 
